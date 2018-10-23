@@ -1,5 +1,2 @@
 target/
-.idea/
-*.iml
 pom.xml.versionsBackup
-.DS_Store
