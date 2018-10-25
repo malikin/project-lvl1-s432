@@ -17,41 +17,64 @@ public class Drunkard {
     private static int[] playersCardTails = new int[2];
     private static int[] playersCardHeads = new int[2];
 
-    private static int[] cardsDeck = IntStream.rangeClosed(1, CARDS_TOTAL_COUNT - 1).toArray();
+    private static int[] cardsDeck = IntStream.rangeClosed(0, CARDS_TOTAL_COUNT - 1).toArray();
 
 
     public static void main() {
         shuffle(cardsDeck);
-
-        playersCards[PLAYER_1] = Arrays.copyOfRange(cardsDeck, 0, cardsDeck.length/2);
-        playersCards[PLAYER_2] = Arrays.copyOfRange(cardsDeck,  cardsDeck.length/2, cardsDeck.length);
-
-        System.out.println(Arrays.toString(playersCards[PLAYER_1]));
-        System.out.println(Arrays.toString(playersCards[PLAYER_2]));
+        System.arraycopy(cardsDeck, 0, playersCards[PLAYER_1], 0,cardsDeck.length/2);
+        System.arraycopy(cardsDeck, cardsDeck.length/2, playersCards[PLAYER_2], 0,cardsDeck.length/2);
 
         playersCardTails[PLAYER_1] = 0;
         playersCardTails[PLAYER_2] = 0;
-        playersCardHeads[PLAYER_1] = CARDS_TOTAL_COUNT/2;
-        playersCardHeads[PLAYER_2] = CARDS_TOTAL_COUNT/2;
+        playersCardHeads[PLAYER_1] = CARDS_TOTAL_COUNT/2 - 1;
+        playersCardHeads[PLAYER_2] = CARDS_TOTAL_COUNT/2 - 1;
 
-        int cardPlayer1 = playersCards[PLAYER_1][playersCardTails[PLAYER_1]];
-        int cardPlayer2 = playersCards[PLAYER_2][playersCardTails[PLAYER_2]];
+        int cycleCount = 0;
+        boolean player1win = false;
+        boolean player2win = false;
 
+        while (true) {
+            if (player1win) {
+                System.out.printf("Выиграл первый игрок! Количество произведённых итераций: %d.%n", cycleCount);
+                break;
+            }
 
+            if (player2win) {
+                System.out.printf("Выиграл второй игрок! Количество произведённых итераций: %d.%n", cycleCount);
+                break;
+            }
 
-        System.out.printf("Итерация №1 грок №1 карта: %s; игрок №2 карта: %s.%n", toString(cardPlayer1), toString(cardPlayer2));
-        if (cardPlayer1 > cardPlayer2) {
-            System.out.println("Выиграл игрок 1!");
-        } else {
-            System.out.println("Выиграл игрок 2!");
+            int cardPlayer1 = getCardFromPlayerDeck(PLAYER_1);
+            int cardPlayer2 = getCardFromPlayerDeck(PLAYER_2);
+
+            System.out.printf("Итерация №1 грок №1 карта: %s; игрок №2 карта: %s.%n", toString(cardPlayer1), toString(cardPlayer2));
+
+            if (cardPlayer1 > cardPlayer2) {
+                addCardToPlayerDeck(PLAYER_1, cardPlayer1);
+                addCardToPlayerDeck(PLAYER_1, cardPlayer2);
+
+                System.out.println("Выиграл игрок 1!");
+            } else {
+                addCardToPlayerDeck(PLAYER_2, cardPlayer1);
+                addCardToPlayerDeck(PLAYER_2, cardPlayer2);
+
+                System.out.println("Выиграл игрок 2!");
+            }
+
+            playersCardHeads[PLAYER_1] = incrementIndex(playersCardHeads[PLAYER_1]);
+            playersCardHeads[PLAYER_2] = incrementIndex(playersCardHeads[PLAYER_2]);
+
+            int player1cardsCount = playersCardHeads[PLAYER_1] - playersCardTails[PLAYER_1];
+            int player2cardsCount = playersCardHeads[PLAYER_2] - playersCardTails[PLAYER_2];
+
+            System.out.printf("У игрока №1 %d карт, у игрока №2 %d карт.%n", player1cardsCount, player2cardsCount);
+
+            System.out.println(Arrays.toString(playersCards[PLAYER_1]));
+            System.out.println(Arrays.toString(playersCards[PLAYER_2]));
+            player1win = playerCardsIsEmpty(PLAYER_2);
+            player2win = playerCardsIsEmpty(PLAYER_1);
         }
-
-        playersCardTails[PLAYER_1] = incrementIndex(playersCardTails[PLAYER_1]);
-        playersCardHeads[PLAYER_1] = incrementIndex(playersCardHeads[PLAYER_1]);
-        playersCardTails[PLAYER_2] = incrementIndex(playersCardTails[PLAYER_2]);
-        playersCardHeads[PLAYER_2] = incrementIndex(playersCardHeads[PLAYER_2]);
-
-        System.out.printf("У игрока №1 %d карт, у игрока №2 %d карт", playersCards[PLAYER_1].length, playersCards[PLAYER_2].length);
     }
 
     enum Suit {
@@ -86,6 +109,19 @@ public class Drunkard {
         int head = playersCardHeads[playerIndex];
 
         return tail == head;
+    }
+
+    private static void addCardToPlayerDeck(int player, int card) {
+        playersCards[player][playersCardHeads[player] - 1] = card;
+        playersCardHeads[player] = incrementIndex(playersCardHeads[player]);
+    }
+
+    private static int getCardFromPlayerDeck(int player) {
+        int card = playersCards[player][playersCardTails[player]];
+        playersCards[player][playersCardTails[player]] = 0;
+        playersCardTails[player] = incrementIndex(playersCardTails[player]);
+
+        return card;
     }
 
     private static int incrementIndex(int i) {
