@@ -15,6 +15,9 @@ public class BlackJack {
     private static final int MAX_CARDS_COUNT = 8;
     private static final int STEP_FUND = 10;
 
+    private static final int MAX_PLAYER_THRESHOLD = 20;
+    private static final int MAX_AI_PLAYER_THRESHOLD = 17;
+
     private static int[] cards;
     private static int cursor;
 
@@ -24,17 +27,14 @@ public class BlackJack {
 
     public static void main() throws IOException {
 
-        while(true) {
-            if (playersMoney[AI_PLAYER] == 0 || playersMoney[PLAYER] == 0) {
-                break;
-            }
+        while(!(playersMoney[AI_PLAYER] == 0 || playersMoney[PLAYER] == 0) ) {
 
             initRound();
 
             log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
             log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
 
-            while (sum(PLAYER) < 20) {
+            while (sum(PLAYER) < MAX_PLAYER_THRESHOLD) {
                 if (confirm("Берём ещё?")){
                     log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
                 } else {
@@ -45,7 +45,7 @@ public class BlackJack {
             log.info("Компьютеру выпала карта {}", CardUtils.toString(addCard2Player(AI_PLAYER)));
             log.info("Компьютеру выпала карта {}", CardUtils.toString(addCard2Player(AI_PLAYER)));
 
-            while (sum(AI_PLAYER) < 17) {
+            while (sum(AI_PLAYER) < MAX_AI_PLAYER_THRESHOLD) {
                 log.info(
                         "Компьютер решил взять ещё и ему выпала карта {}",
                         CardUtils.toString(addCard2Player(AI_PLAYER))
@@ -79,7 +79,7 @@ public class BlackJack {
     }
 
     private static void initRound() {
-        log.info("\nУ Вас " + playersMoney[PLAYER] + "$, у компьютера - " + playersMoney[AI_PLAYER] + "$. Начинаем новый раунд!");
+        log.info("У Вас " + playersMoney[PLAYER] + "$, у компьютера - " + playersMoney[AI_PLAYER] + "$. Начинаем новый раунд!");
         cards = CardUtils.getShaffledCards();
         playersCards = new int[2][MAX_CARDS_COUNT];
         playersCursors = new int[]{0, 0};

@@ -29,20 +29,10 @@ public class Drunkard {
         playersWins[PLAYER_1] = false;
         playersWins[PLAYER_2] = false;
 
-        int cycleCount = 1;
+        int cycleCount = 0;
 
-        while (true) {
-            if (playerCardsIsEmpty(PLAYER_1) || playerCardsIsEmpty(PLAYER_2)) {
-                if (playersWins[PLAYER_1]) {
-                    log.info("Выиграл первый игрок! Количество произведённых итераций: {}.", cycleCount);
-                    break;
-                }
-
-                if (playersWins[PLAYER_2]) {
-                    log.info("Выиграл второй игрок! Количество произведённых итераций: {}.", cycleCount);
-                    break;
-                }
-            }
+        while (!(playerCardsIsEmpty(PLAYER_1) || playerCardsIsEmpty(PLAYER_2))) {
+            cycleCount++;
 
             int cardPlayer1 = getCardFromPlayerDeck(PLAYER_1);
             int cardPlayer2 = getCardFromPlayerDeck(PLAYER_2);
@@ -60,8 +50,12 @@ public class Drunkard {
             int player2cardsCount = countCardsInPlayerDeck(PLAYER_2);
 
             log.info("У игрока №1 {} карт, у игрока №2 {} карт.", player1cardsCount, player2cardsCount);
+        }
 
-            cycleCount++;
+        if (playersWins[PLAYER_1]) {
+            log.info("Выиграл первый игрок! Количество произведённых итераций: {}.", cycleCount);
+        } else {
+            log.info("Выиграл второй игрок! Количество произведённых итераций: {}.", cycleCount);
         }
     }
 
