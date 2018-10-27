@@ -1,14 +1,9 @@
 package games;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
-
-import static org.apache.commons.math3.util.MathArrays.shuffle;
+import static games.CardUtils.CARDS_TOTAL_COUNT;
 
 public class Drunkard {
-    private static final int PARS_TOTAL_COUNT = Par.values().length;
-    private static final int CARDS_TOTAL_COUNT = PARS_TOTAL_COUNT * Suit.values().length;
-
     private static final int PLAYER_1 = 0;
     private static final int PLAYER_2 = 1;
 
@@ -17,11 +12,9 @@ public class Drunkard {
     private static int[] playersCardHeads = new int[2];
     private static boolean[] playersWins = new boolean[2];
 
-    private static int[] cardsDeck = IntStream.rangeClosed(0, CARDS_TOTAL_COUNT - 1).toArray();
-
 
     public static void main() {
-        shuffle(cardsDeck);
+        int[]cardsDeck = CardUtils.getShaffledCards();
         System.arraycopy(cardsDeck, 0, playersCardDecks[PLAYER_1], 0,cardsDeck.length/2);
         System.arraycopy(cardsDeck, cardsDeck.length/2, playersCardDecks[PLAYER_2], 0,cardsDeck.length/2);
 
@@ -52,7 +45,12 @@ public class Drunkard {
 
             playersBattle(cardPlayer1, cardPlayer2);
 
-            System.out.printf("Итерация №%d игрок №1 карта: %s; игрок №2 карта: %s.%n", cycleCount, toString(cardPlayer1), toString(cardPlayer2));
+            System.out.printf(
+                    "Итерация №%d игрок №1 карта: %s; игрок №2 карта: %s.%n",
+                    cycleCount,
+                    CardUtils.toString(cardPlayer1),
+                    CardUtils.toString(cardPlayer2)
+            );
 
             int player1cardsCount = countCardsInPlayerDeck(PLAYER_1);
             int player2cardsCount = countCardsInPlayerDeck(PLAYER_2);
@@ -61,14 +59,6 @@ public class Drunkard {
 
             cycleCount++;
         }
-    }
-
-    private static Suit getSuit(int cardNumber) {
-        return Suit.values()[cardNumber / PARS_TOTAL_COUNT];
-    }
-
-    private static Par getPar(int cardNumber) {
-        return Par.values()[cardNumber % PARS_TOTAL_COUNT];
     }
 
     private static boolean playerCardsIsEmpty(int playerIndex) {
@@ -112,8 +102,8 @@ public class Drunkard {
     }
 
     private static void playersBattle(int cardPlayer1, int cardPlayer2) {
-        Par cardPlayer1Par = getPar(cardPlayer1);
-        Par cardPlayer2Par = getPar(cardPlayer2);
+        Par cardPlayer1Par = CardUtils.getPar(cardPlayer1);
+        Par cardPlayer2Par = CardUtils.getPar(cardPlayer2);
 
         if (cardPlayer1Par.ordinal() == cardPlayer2Par.ordinal()) {
             addCardToPlayerDeck(PLAYER_1, cardPlayer1);
@@ -128,7 +118,7 @@ public class Drunkard {
             if (cardPlayer1Par.equals(Par.SIX) && cardPlayer2Par.equals(Par.ACE)) {
                 addCardToPlayerDeck(PLAYER_1, cardPlayer1);
                 addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-                setWiner(PLAYER_1, true);
+                setWinner(PLAYER_1);
 
                 System.out.println("Выиграл игрок 1!");
 
@@ -137,7 +127,7 @@ public class Drunkard {
             if (cardPlayer2Par.equals(Par.SIX) && cardPlayer1Par.equals(Par.ACE)) {
                 addCardToPlayerDeck(PLAYER_2, cardPlayer1);
                 addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-                setWiner(PLAYER_2, true);
+                setWinner(PLAYER_2);
 
                 System.out.println("Выиграл игрок 2!");
 
@@ -148,24 +138,20 @@ public class Drunkard {
         if (cardPlayer1Par.ordinal() > cardPlayer2Par.ordinal()) {
             addCardToPlayerDeck(PLAYER_1, cardPlayer1);
             addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-            setWiner(PLAYER_1, true);
+            setWinner(PLAYER_1);
 
             System.out.println("Выиграл игрок 1!");
         } else {
             addCardToPlayerDeck(PLAYER_2, cardPlayer1);
             addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-            setWiner(PLAYER_2, true);
+            setWinner(PLAYER_2);
 
             System.out.println("Выиграл игрок 2!");
         }
     }
 
-    private static void setWiner(int player, boolean status) {
+    private static void setWinner(int player) {
         Arrays.fill(playersWins, false);
-        playersWins[player] = status;
-    }
-
-    private static String toString(int cardNumber) {
-        return getPar(cardNumber) + " " + getSuit(cardNumber);
+        playersWins[player] = true;
     }
 }
