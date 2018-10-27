@@ -94,7 +94,7 @@ public class Drunkard {
     private static int countCardsInPlayerDeck(int player) {
         int count;
 
-        if (playersCardHeads[player] > playersCardTails[player]) {
+        if (playersCardHeads[player] >= playersCardTails[player]) {
             count = playersCardHeads[player] - playersCardTails[player];
         } else {
             count = (playersCardHeads[player] + CARDS_TOTAL_COUNT) - playersCardTails[player];
@@ -128,7 +128,7 @@ public class Drunkard {
             if (cardPlayer1Par.equals(Par.SIX) && cardPlayer2Par.equals(Par.ACE)) {
                 addCardToPlayerDeck(PLAYER_1, cardPlayer1);
                 addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-                setWins(PLAYER_1, true);
+                setWiner(PLAYER_1, true);
 
                 System.out.println("Выиграл игрок 1!");
 
@@ -137,7 +137,7 @@ public class Drunkard {
             if (cardPlayer2Par.equals(Par.SIX) && cardPlayer1Par.equals(Par.ACE)) {
                 addCardToPlayerDeck(PLAYER_2, cardPlayer1);
                 addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-                setWins(PLAYER_2, true);
+                setWiner(PLAYER_2, true);
 
                 System.out.println("Выиграл игрок 2!");
 
@@ -148,19 +148,19 @@ public class Drunkard {
         if (cardPlayer1Par.ordinal() > cardPlayer2Par.ordinal()) {
             addCardToPlayerDeck(PLAYER_1, cardPlayer1);
             addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-            setWins(PLAYER_1, true);
+            setWiner(PLAYER_1, true);
 
             System.out.println("Выиграл игрок 1!");
         } else {
             addCardToPlayerDeck(PLAYER_2, cardPlayer1);
             addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-            setWins(PLAYER_2, true);
+            setWiner(PLAYER_2, true);
 
             System.out.println("Выиграл игрок 2!");
         }
     }
 
-    private static void setWins(int player, boolean status) {
+    private static void setWiner(int player, boolean status) {
         Arrays.fill(playersWins, false);
         playersWins[player] = status;
     }
