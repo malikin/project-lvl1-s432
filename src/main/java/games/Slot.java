@@ -1,11 +1,14 @@
 package games;
 
+import org.slf4j.Logger;
+
 import static java.lang.Math.random;
 import static java.lang.Math.round;
 
 public class Slot {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Slot.class);
 
-    public static void main(String... __) {
+    public static void main() {
         int playerFund = 100;
         int betSum = 10;
         int winFund = 1_000;
@@ -20,16 +23,16 @@ public class Slot {
             secondCounter = (secondCounter + (int) round(random() * 100)) % counterSize;
             thirdCounter  = (thirdCounter + (int) round(random() * 100)) % counterSize;
 
-            System.out.printf("У Вас %d$, ставка - %d$%n", playerFund, betSum);
-            System.out.println("Крутим барабаны! Розыгрыш принёс следующие результаты:");
-            System.out.printf("первый барабан - %d, второй - %d, третий - %d%n", firstCounter, secondCounter, thirdCounter);
+            log.info("У Вас {}$, ставка - {}$", playerFund, betSum);
+            log.info("Крутим барабаны! Розыгрыш принёс следующие результаты:");
+            log.info("первый барабан - {}, второй - {}, третий - {}", firstCounter, secondCounter, thirdCounter);
 
             if ((firstCounter == secondCounter) && (secondCounter == thirdCounter)) {
                 playerFund = playerFund + winFund;
-                System.out.printf("Выигрыш %d$, ваш капитал теперь составляет: %d$", winFund, playerFund);
+                log.info("Выигрыш {}$, ваш капитал теперь составляет: {}$", winFund, playerFund);
             } else {
                 playerFund = playerFund - betSum;
-                System.out.printf("Проигрыш %d$, ваш капитал теперь составляет: %d$", betSum, playerFund);
+                log.info("Проигрыш {}$, ваш капитал теперь составляет: {}$", betSum, playerFund);
             }
         }
 
