@@ -1,9 +1,13 @@
 package games;
 
+import org.slf4j.Logger;
+
 import java.util.Arrays;
 import static games.CardUtils.CARDS_TOTAL_COUNT;
 
 public class Drunkard {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Drunkard.class);
+
     private static final int PLAYER_1 = 0;
     private static final int PLAYER_2 = 1;
 
@@ -30,12 +34,12 @@ public class Drunkard {
         while (true) {
             if (playerCardsIsEmpty(PLAYER_1) || playerCardsIsEmpty(PLAYER_2)) {
                 if (playersWins[PLAYER_1]) {
-                    System.out.printf("Выиграл первый игрок! Количество произведённых итераций: %d.%n", cycleCount);
+                    log.info("Выиграл первый игрок! Количество произведённых итераций: {}.", cycleCount);
                     break;
                 }
 
                 if (playersWins[PLAYER_2]) {
-                    System.out.printf("Выиграл второй игрок! Количество произведённых итераций: %d.%n", cycleCount);
+                    log.info("Выиграл второй игрок! Количество произведённых итераций: {}.", cycleCount);
                     break;
                 }
             }
@@ -45,8 +49,8 @@ public class Drunkard {
 
             playersBattle(cardPlayer1, cardPlayer2);
 
-            System.out.printf(
-                    "Итерация №%d игрок №1 карта: %s; игрок №2 карта: %s.%n",
+            log.info(
+                    "Итерация №{} игрок №1 карта: {}; игрок №2 карта: {}.",
                     cycleCount,
                     CardUtils.toString(cardPlayer1),
                     CardUtils.toString(cardPlayer2)
@@ -55,7 +59,7 @@ public class Drunkard {
             int player1cardsCount = countCardsInPlayerDeck(PLAYER_1);
             int player2cardsCount = countCardsInPlayerDeck(PLAYER_2);
 
-            System.out.printf("У игрока №1 %d карт, у игрока №2 %d карт.%n", player1cardsCount, player2cardsCount);
+            log.info("У игрока №1 {} карт, у игрока №2 {} карт.", player1cardsCount, player2cardsCount);
 
             cycleCount++;
         }
@@ -109,7 +113,7 @@ public class Drunkard {
             addCardToPlayerDeck(PLAYER_1, cardPlayer1);
             addCardToPlayerDeck(PLAYER_2, cardPlayer2);
 
-            System.out.println("Спор - каждый остаётся при своих!");
+            log.info("Спор - каждый остаётся при своих!");
 
             return;
         }
@@ -120,7 +124,7 @@ public class Drunkard {
                 addCardToPlayerDeck(PLAYER_1, cardPlayer2);
                 setWinner(PLAYER_1);
 
-                System.out.println("Выиграл игрок 1!");
+                log.info("Выиграл игрок 1!");
 
                 return;
             }
@@ -129,7 +133,7 @@ public class Drunkard {
                 addCardToPlayerDeck(PLAYER_2, cardPlayer2);
                 setWinner(PLAYER_2);
 
-                System.out.println("Выиграл игрок 2!");
+                log.info("Выиграл игрок 2!");
 
                 return;
             }
@@ -140,13 +144,13 @@ public class Drunkard {
             addCardToPlayerDeck(PLAYER_1, cardPlayer2);
             setWinner(PLAYER_1);
 
-            System.out.println("Выиграл игрок 1!");
+            log.info("Выиграл игрок 1!");
         } else {
             addCardToPlayerDeck(PLAYER_2, cardPlayer1);
             addCardToPlayerDeck(PLAYER_2, cardPlayer2);
             setWinner(PLAYER_2);
 
-            System.out.println("Выиграл игрок 2!");
+            log.info("Выиграл игрок 2!");
         }
     }
 
