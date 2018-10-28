@@ -34,12 +34,8 @@ public class BlackJack {
             log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
             log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
 
-            while (sum(PLAYER) < MAX_PLAYER_THRESHOLD) {
-                if (confirm("Берём ещё?")){
-                    log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
-                } else {
-                    break;
-                }
+            while ((sum(PLAYER) < MAX_PLAYER_THRESHOLD) && confirm("Берём ещё?")) {
+                log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
             }
 
             log.info("Компьютеру выпала карта {}", CardUtils.toString(addCard2Player(AI_PLAYER)));

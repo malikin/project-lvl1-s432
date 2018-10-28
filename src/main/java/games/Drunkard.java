@@ -22,12 +22,8 @@ public class Drunkard {
         System.arraycopy(cardsDeck, 0, playersCardDecks[PLAYER_1], 0,cardsDeck.length/2);
         System.arraycopy(cardsDeck, cardsDeck.length/2, playersCardDecks[PLAYER_2], 0,cardsDeck.length/2);
 
-        playersCardTails[PLAYER_1] = 0;
-        playersCardTails[PLAYER_2] = 0;
         playersCardHeads[PLAYER_1] = CARDS_TOTAL_COUNT/2;
         playersCardHeads[PLAYER_2] = CARDS_TOTAL_COUNT/2;
-        playersWins[PLAYER_1] = false;
-        playersWins[PLAYER_2] = false;
 
         int cycleCount = 0;
 
@@ -37,14 +33,14 @@ public class Drunkard {
             int cardPlayer1 = getCardFromPlayerDeck(PLAYER_1);
             int cardPlayer2 = getCardFromPlayerDeck(PLAYER_2);
 
-            playersBattle(cardPlayer1, cardPlayer2);
-
             log.info(
                     "Итерация №{} игрок №1 карта: {}; игрок №2 карта: {}.",
                     cycleCount,
                     CardUtils.toString(cardPlayer1),
                     CardUtils.toString(cardPlayer2)
             );
+
+            playersBattle(cardPlayer1, cardPlayer2);
 
             int player1cardsCount = countCardsInPlayerDeck(PLAYER_1);
             int player2cardsCount = countCardsInPlayerDeck(PLAYER_2);
@@ -67,25 +63,31 @@ public class Drunkard {
     }
 
     private static void addCardToPlayerDeck(int player, int card) {
-        playersCardDecks[player][playersCardHeads[player]] = card;
-        playersCardHeads[player] = incrementIndex(playersCardHeads[player]);
+        int head = playersCardHeads[player];
+
+        playersCardDecks[player][head] = card;
+        playersCardHeads[player] = incrementIndex(head);
     }
 
     private static int getCardFromPlayerDeck(int player) {
-        int card = playersCardDecks[player][playersCardTails[player]];
-        playersCardDecks[player][playersCardTails[player]] = 0;
-        playersCardTails[player] = incrementIndex(playersCardTails[player]);
+        int tail = playersCardTails[player];
+        int card = playersCardDecks[player][tail];
+
+        playersCardDecks[player][tail] = 0;
+        playersCardTails[player] = incrementIndex(tail);
 
         return card;
     }
 
     private static int countCardsInPlayerDeck(int player) {
         int count;
+        int tail = playersCardTails[player];
+        int head = playersCardHeads[player];
 
-        if (playersCardHeads[player] >= playersCardTails[player]) {
-            count = playersCardHeads[player] - playersCardTails[player];
+        if (head >= tail) {
+            count = head - tail;
         } else {
-            count = (playersCardHeads[player] + CARDS_TOTAL_COUNT) - playersCardTails[player];
+            count = (head + CARDS_TOTAL_COUNT) - tail;
         }
 
         if (count == 0 && playersWins[player]) {
@@ -112,43 +114,40 @@ public class Drunkard {
             return;
         }
 
-        if (cardPlayer1Par.equals(Par.SIX) || cardPlayer2Par.equals(Par.SIX)) {
-            if (cardPlayer1Par.equals(Par.SIX) && cardPlayer2Par.equals(Par.ACE)) {
-                addCardToPlayerDeck(PLAYER_1, cardPlayer1);
-                addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-                setWinner(PLAYER_1);
+        if (cardPlayer1Par.equals(Par.SIX) && cardPlayer2Par.equals(Par.ACE)) {
+            addCardsToWinner(PLAYER_1, cardPlayer1, cardPlayer2);
 
-                log.info("Выиграл игрок 1!");
+            log.info("Выиграл игрок 1!");
 
-                return;
-            }
-            if (cardPlayer2Par.equals(Par.SIX) && cardPlayer1Par.equals(Par.ACE)) {
-                addCardToPlayerDeck(PLAYER_2, cardPlayer1);
-                addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-                setWinner(PLAYER_2);
+            return;
+        }
 
-                log.info("Выиграл игрок 2!");
+        if (cardPlayer2Par.equals(Par.SIX) && cardPlayer1Par.equals(Par.ACE)) {
+            addCardsToWinner(PLAYER_2, cardPlayer1, cardPlayer2);
 
-                return;
-            }
+            log.info("Выиграл игрок 2!");
+
+            return;
         }
 
         if (cardPlayer1Par.ordinal() > cardPlayer2Par.ordinal()) {
-            addCardToPlayerDeck(PLAYER_1, cardPlayer1);
-            addCardToPlayerDeck(PLAYER_1, cardPlayer2);
-            setWinner(PLAYER_1);
+            addCardsToWinner(PLAYER_1, cardPlayer1, cardPlayer2);
 
             log.info("Выиграл игрок 1!");
-        } else {
-            addCardToPlayerDeck(PLAYER_2, cardPlayer1);
-            addCardToPlayerDeck(PLAYER_2, cardPlayer2);
-            setWinner(PLAYER_2);
+        }
+
+        if (cardPlayer1Par.ordinal() < cardPlayer2Par.ordinal()) {
+            addCardsToWinner(PLAYER_2, cardPlayer1, cardPlayer2);
 
             log.info("Выиграл игрок 2!");
         }
     }
 
-    private static void setWinner(int player) {
+    private static void addCardsToWinner(int player, int ...cards) {
+        for (int card : cards) {
+            addCardToPlayerDeck(player, card);
+        }
+
         Arrays.fill(playersWins, false);
         playersWins[player] = true;
     }
