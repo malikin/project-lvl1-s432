@@ -105,42 +105,33 @@ public class Drunkard {
         Par cardPlayer1Par = CardUtils.getPar(cardPlayer1);
         Par cardPlayer2Par = CardUtils.getPar(cardPlayer2);
 
-        if (cardPlayer1Par.ordinal() == cardPlayer2Par.ordinal()) {
-            addCardToPlayerDeck(PLAYER_1, cardPlayer1);
-            addCardToPlayerDeck(PLAYER_2, cardPlayer2);
+        switch (compareCardPars(cardPlayer1Par, cardPlayer2Par)) {
+            case 0:
+                addCardToPlayerDeck(PLAYER_1, cardPlayer1);
+                addCardToPlayerDeck(PLAYER_2, cardPlayer2);
+                log.info("Спор - каждый остаётся при своих!");
+                break;
+            case 1:
+                addCardsToWinner(PLAYER_1, cardPlayer1, cardPlayer2);
+                log.info("Выиграл игрок 1!");
+                break;
+            case -1:
+                addCardsToWinner(PLAYER_2, cardPlayer1, cardPlayer2);
+                log.info("Выиграл игрок 2!");
+                break;
+        }
+    }
 
-            log.info("Спор - каждый остаётся при своих!");
-
-            return;
+    private static int compareCardPars(Par card1Par, Par card2Par) {
+        if (card1Par.equals(Par.SIX) && card2Par.equals(Par.ACE)) {
+            return 1;
         }
 
-        if (cardPlayer1Par.equals(Par.SIX) && cardPlayer2Par.equals(Par.ACE)) {
-            addCardsToWinner(PLAYER_1, cardPlayer1, cardPlayer2);
-
-            log.info("Выиграл игрок 1!");
-
-            return;
+        if (card1Par.equals(Par.ACE) && card2Par.equals(Par.SIX)) {
+            return -1;
         }
 
-        if (cardPlayer2Par.equals(Par.SIX) && cardPlayer1Par.equals(Par.ACE)) {
-            addCardsToWinner(PLAYER_2, cardPlayer1, cardPlayer2);
-
-            log.info("Выиграл игрок 2!");
-
-            return;
-        }
-
-        if (cardPlayer1Par.ordinal() > cardPlayer2Par.ordinal()) {
-            addCardsToWinner(PLAYER_1, cardPlayer1, cardPlayer2);
-
-            log.info("Выиграл игрок 1!");
-        }
-
-        if (cardPlayer1Par.ordinal() < cardPlayer2Par.ordinal()) {
-            addCardsToWinner(PLAYER_2, cardPlayer1, cardPlayer2);
-
-            log.info("Выиграл игрок 2!");
-        }
+        return Integer.compare(card1Par.ordinal(), card2Par.ordinal());
     }
 
     private static void addCardsToWinner(int player, int ...cards) {

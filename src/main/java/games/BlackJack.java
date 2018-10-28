@@ -31,15 +31,13 @@ public class BlackJack {
 
             initRound();
 
-            log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
-            log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
+            addCards2Player(PLAYER, 2);
 
             while ((sum(PLAYER) < MAX_PLAYER_THRESHOLD) && confirm("Берём ещё?")) {
-                log.info("Вам выпала карта {}", CardUtils.toString(addCard2Player(PLAYER)));
+                addCards2Player(PLAYER, 1);
             }
 
-            log.info("Компьютеру выпала карта {}", CardUtils.toString(addCard2Player(AI_PLAYER)));
-            log.info("Компьютеру выпала карта {}", CardUtils.toString(addCard2Player(AI_PLAYER)));
+            addCards2Player(AI_PLAYER, 2);
 
             while (sum(AI_PLAYER) < MAX_AI_PLAYER_THRESHOLD) {
                 log.info(
@@ -80,6 +78,14 @@ public class BlackJack {
         playersCards = new int[2][MAX_CARDS_COUNT];
         playersCursors = new int[]{0, 0};
         cursor = 0;
+    }
+
+    private static void addCards2Player(int player, int count) {
+        String playerName = player == PLAYER ? "Вам" : "Компьютеру";
+
+        for (int i = 0; i < count; i++) {
+            log.info("{} выпала карта {}", playerName, CardUtils.toString(addCard2Player(player)));
+        }
     }
 
     private static int addCard2Player(int player) {
