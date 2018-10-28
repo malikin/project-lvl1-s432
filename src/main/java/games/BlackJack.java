@@ -15,6 +15,7 @@ public class BlackJack {
     private static final int MAX_CARDS_COUNT = 8;
     private static final int STEP_FUND = 10;
 
+    private static final int MIN_THRESHOLD = 11;
     private static final int MAX_PLAYER_THRESHOLD = 20;
     private static final int MAX_AI_PLAYER_THRESHOLD = 17;
 
@@ -31,13 +32,14 @@ public class BlackJack {
 
             initRound();
 
-            addCards2Player(PLAYER, 2);
+            do {
+                addCard2PlayerAndLog(PLAYER);
+            } while (sum(PLAYER) < MIN_THRESHOLD || (sum(PLAYER) < MAX_PLAYER_THRESHOLD && confirm("Берём ещё?")));
 
-            while ((sum(PLAYER) < MAX_PLAYER_THRESHOLD) && confirm("Берём ещё?")) {
-                addCards2Player(PLAYER, 1);
-            }
+            do {
+                addCard2PlayerAndLog(AI_PLAYER);
+            } while (sum(AI_PLAYER) < MIN_THRESHOLD);
 
-            addCards2Player(AI_PLAYER, 2);
 
             while (sum(AI_PLAYER) < MAX_AI_PLAYER_THRESHOLD) {
                 log.info(
@@ -80,12 +82,10 @@ public class BlackJack {
         cursor = 0;
     }
 
-    private static void addCards2Player(int player, int count) {
+    private static void addCard2PlayerAndLog(int player) {
         String playerName = player == PLAYER ? "Вам" : "Компьютеру";
 
-        for (int i = 0; i < count; i++) {
-            log.info("{} выпала карта {}", playerName, CardUtils.toString(addCard2Player(player)));
-        }
+        log.info("{} выпала карта {}", playerName, CardUtils.toString(addCard2Player(player)));
     }
 
     private static int addCard2Player(int player) {
